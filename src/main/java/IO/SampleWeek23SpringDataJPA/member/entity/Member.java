@@ -1,11 +1,15 @@
 package IO.SampleWeek23SpringDataJPA.member.entity;
 
+import IO.SampleWeek23SpringDataJPA.order.entity.Order;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor
 @Getter
@@ -14,7 +18,7 @@ import java.time.LocalDateTime;
 public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long memberId;
+    private Long memberId;
 
     @Column(nullable = false, updatable = false, unique = true)
     private String email;
@@ -25,6 +29,10 @@ public class Member {
     @Column(length = 13, nullable = false, unique = true)
     private String phone;
 
+    @Enumerated(value = EnumType.STRING)
+    @Column(length = 20,nullable = false)
+    private MemberStatus memberStatus = MemberStatus.MEMBER_ACTIVE;
+
     @Column(nullable = false)
     private LocalDateTime createAt = LocalDateTime.now();
 
@@ -34,6 +42,16 @@ public class Member {
     @Transient
     private String age;
 
+    @OneToMany(mappedBy = "member")
+    private List<Order> orders = new ArrayList<>();
+
+    public void addOrder(Order order) {
+        orders.add(order);
+    }
+
+    @OneToOne(mappedBy = "member")
+    private MemberStamp stamp;
+
     public Member(String email) {
         this.email = email;
     }
@@ -42,5 +60,17 @@ public class Member {
         this.email = email;
         this.name = name;
         this.phone = phone;
+    }
+
+
+
+    @Getter
+    @AllArgsConstructor
+    public enum MemberStatus {
+        MEMBER_ACTIVE("활동중"),
+        MEMBER_SLEEP("휴면 상태"),
+        MEMBER_QUIT("탈퇴 상태");
+
+        private String status;
     }
 }

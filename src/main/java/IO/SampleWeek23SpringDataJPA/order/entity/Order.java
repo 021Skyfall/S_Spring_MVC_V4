@@ -1,9 +1,12 @@
 package IO.SampleWeek23SpringDataJPA.order.entity;
 
+import IO.SampleWeek23SpringDataJPA.member.entity.Member;
 import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor
 @Getter
@@ -12,7 +15,7 @@ import java.time.LocalDateTime;
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long orderId;
+    private Long orderId;
 
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus = OrderStatus.ORDER_REQUEST;
@@ -22,6 +25,14 @@ public class Order {
 
     @Column(nullable = false,name = "LAST_MODIFIED_AT")
     private LocalDateTime modifiedAt = LocalDateTime.now();
+
+    @ManyToOne
+    @JoinColumn(name = "MEMBER_ID")
+    private Member member;
+
+    @OneToMany(mappedBy = "order")
+    private List<OrderCoffee> orderCoffees = new ArrayList<>();
+
 
     @Getter
     @AllArgsConstructor

@@ -1,5 +1,6 @@
 package IO.SampleWeek23SpringDataJPA.coffee.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,7 +15,7 @@ import java.time.LocalDateTime;
 public class Coffee {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long coffeeId;
+    private Long coffeeId;
 
     @Column(nullable = false, length = 50)
     private String korName;
@@ -23,14 +24,27 @@ public class Coffee {
     private String engName;
 
     @Column(nullable = false)
-    private int price;
+    private Integer price;
 
-    @Column(nullable = false, length = 3)
+    @Column(nullable = false, length = 3, unique = true)
     private String coffeeCode;
+
+    @Enumerated(value = EnumType.STRING)
+    @Column(length = 20, nullable = false)
+    private CoffeeStatus coffeeStatus = CoffeeStatus.COFFEE_FOR_SALE;
 
     @Column(nullable = false)
     private LocalDateTime createAt = LocalDateTime.now();
 
     @Column(nullable = false, name = "LAST_MODIFIED_AT")
     private LocalDateTime modifiedAt = LocalDateTime.now();
+
+    @Getter
+    @AllArgsConstructor
+    public enum CoffeeStatus {
+        COFFEE_FOR_SALE("판매중"),
+        COFFEE_SOLD_OUT("판매중지");
+
+        private String status;
+    }
 }
